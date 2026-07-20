@@ -1,0 +1,84 @@
+:root {
+  /* Brand Colours */
+  --bg-deep: #0a0b16;
+  --bg-mid: #16182e;
+  --bg-lavender: #4c3d6d;
+  --accent-lavender: #a98be8;
+  --accent-gold: #e5b962;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --error: #ef4444;
+  --success: #10b981;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(22, 24, 46, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-mid) 50%, var(--bg-lavender) 100%);
+  color: var(--text-main);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Glass Card Utility */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+}
+
+/* Typography Utilities */
+.h-brand {
+  font-family: var(--font-serif);
+  color: var(--text-main);
+  font-weight: 600;
+}
+.text-accent {
+  color: var(--accent-gold);
+}
+
+/* Form Elements base */
+input, textarea, select {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+}
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
