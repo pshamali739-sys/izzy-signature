@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS orders (
   colour TEXT NOT NULL,
   notes TEXT,
   status TEXT NOT NULL DEFAULT 'pending'
-         CHECK(status IN ('pending','confirmed','shipped','delivered','cancelled')),
+         CHECK(status IN ('pending','confirmed','no_answer','rejected')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -37,6 +37,7 @@ END;
 $$ language 'plpgsql';
 
 -- Trigger to auto-update updated_at on orders
+DROP TRIGGER IF EXISTS orders_updated_at ON orders;
 CREATE TRIGGER orders_updated_at
   BEFORE UPDATE ON orders
   FOR EACH ROW
@@ -47,3 +48,7 @@ CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_order_code ON orders(order_code);
 CREATE INDEX IF NOT EXISTS idx_orders_mobile_number ON orders(mobile_number);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
+
+-- Update existing orders to use new status values
+UPDATE orders SET status = 'rejected' WHERE status = 'cancelled';
+UPDATE orders SET status = 'confirmed' WHERE status IN ('shipped', 'delivered');

@@ -11,6 +11,13 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [stats, setStats] = useState({
+    pending: 0,
+    confirmed: 0,
+    no_answer: 0,
+    rejected: 0,
+    total: 0
+  });
 
   const token = localStorage.getItem('izzy_admin_token');
 
@@ -38,6 +45,16 @@ export default function Dashboard() {
       }
       const data = await res.json();
       setOrders(data.data || []);
+      
+      // Calculate statistics
+      const allOrders = data.data || [];
+      setStats({
+        pending: allOrders.filter(o => o.status === 'pending').length,
+        confirmed: allOrders.filter(o => o.status === 'confirmed').length,
+        no_answer: allOrders.filter(o => o.status === 'no_answer').length,
+        rejected: allOrders.filter(o => o.status === 'rejected').length,
+        total: allOrders.length
+      });
     } catch (err) {
       console.error(err);
     } finally {
@@ -50,6 +67,28 @@ export default function Dashboard() {
     navigate('/admin/login');
   };
 
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const res = await fetch(`/api/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (res.ok) {
+        fetchOrders(); // Refresh orders and stats
+      } else {
+        alert('Failed to update order status');
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+      alert('Failed to update order status');
+    }
+  };
+
   return (
     <div className="admin-layout">
       <header className="admin-header">
@@ -58,6 +97,30 @@ export default function Dashboard() {
       </header>
 
       <main className="admin-main">
+        {/* Statistics Cards */}
+        <div className="stats-grid">
+          <div className="stat-card glass-card">
+            <div className="stat-number">{stats.total}</div>
+            <div className="stat-label">Total Orders</div>
+          </div>
+          <div className="stat-card glass-card pending">
+            <div className="stat-number">{stats.pending}</div>
+            <div className="stat-label">Pending</div>
+          </div>
+          <div className="stat-card glass-card confirmed">
+            <div className="stat-number">{stats.confirmed}</div>
+            <div className="stat-label">Confirmed</div>
+          </div>
+          <div className="stat-card glass-card no-answer">
+            <div className="stat-number">{stats.no_answer}</div>
+            <div className="stat-label">No Answer</div>
+          </div>
+          <div className="stat-card glass-card rejected">
+            <div className="stat-number">{stats.rejected}</div>
+            <div className="stat-label">Rejected</div>
+          </div>
+        </div>
+
         <div className="filters glass-card">
           <input 
             type="text" 
@@ -69,9 +132,8 @@ export default function Dashboard() {
             <option value="">All Statuses</option>
             <option value="pending">Pending</option>
             <option value="confirmed">Confirmed</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="no_answer">No Answer</option>
+            <option value="rejected">Rejected</option>
           </select>
         </div>
 
@@ -85,23 +147,62 @@ export default function Dashboard() {
                   <th>Order Code</th>
                   <th>Date</th>
                   <th>Customer</th>
+                  <th>Phone</th>
                   <th>Size</th>
                   <th>Colour</th>
                   <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.length === 0 && (
-                  <tr><td colSpan="6" style={{textAlign: 'center'}}>No orders found</td></tr>
+                  <tr><td colSpan="8" style={{textAlign: 'center'}}>No orders found</td></tr>
                 )}
                 {orders.map(o => (
-                  <tr key={o.id} onClick={() => setSelectedOrderId(o.id)}>
+                  <tr key={o.id}>
                     <td className="text-accent" style={{fontWeight: 600}}>{o.order_code}</td>
                     <td>{new Date(o.created_at).toLocaleDateString()}</td>
                     <td>{o.customer_name}</td>
+                    <td>{o.mobile_number}</td>
                     <td>{o.size}</td>
                     <td>{o.colour}</td>
                     <td><StatusBadge status={o.status} /></td>
+                    <td className="actions-cell">
+                      {o.status === 'pending' && (
+                        <>
+                          <button 
+                            className="action-btn confirm"
+                            onClick={() => updateOrderStatus(o.id, 'confirmed')}
+                            title="Confirm"
+                          >
+                            ✅
+                          </button>
+                          <button 
+                            className="action-btn no-answer"
+                            onClick={() => updateOrderStatus(o.id, 'no_answer')}
+                            title="No Answer"
+                          >
+                            📞
+                          </button>
+                          <button 
+                            className="action-btn reject"
+                            onClick={() => updateOrderStatus(o.id, 'rejected')}
+                            title="Reject"
+                          >
+                            ❌
+                          </button>
+                        </>
+                      )}
+                      {o.status !== 'pending' && (
+                        <span 
+                          className="view-details"
+                          onClick={() => setSelectedOrderId(o.id)}
+                          style={{cursor: 'pointer', color: '#8b5cf6'}}
+                        >
+                          View Details
+                        </span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

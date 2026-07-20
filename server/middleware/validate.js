@@ -10,6 +10,7 @@ const ALLOWED_COLOURS = [
   'Red',
   'Orange',
 ];
+const ALLOWED_STATUSES = ['pending', 'confirmed', 'no_answer', 'rejected'];
 
 // Sri Lankan mobile: starts with 07, exactly 10 digits (spaces/dashes optional)
 const MOBILE_REGEX = /^07[0-9]{8}$/;
