@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
 import OrderDetail from './OrderDetail';
+import CustomerModal from './CustomerModal';
 import './Admin.css';
 
 export default function Dashboard() {
@@ -11,6 +12,7 @@ export default function Dashboard() {
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [stats, setStats] = useState({
     pending: 0,
     confirmed: 0,
@@ -89,6 +91,12 @@ export default function Dashboard() {
     }
   };
 
+  const truncateAddress = (address) => {
+    if (!address) return '';
+    if (address.length <= 25) return address;
+    return address.substring(0, 25) + '...';
+  };
+
   return (
     <div className="admin-layout">
       <header className="admin-header">
@@ -148,6 +156,7 @@ export default function Dashboard() {
                   <th>Date</th>
                   <th>Customer</th>
                   <th>Phone</th>
+                  <th>Product</th>
                   <th>Size</th>
                   <th>Colour</th>
                   <th>Status</th>
@@ -156,14 +165,22 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {orders.length === 0 && (
-                  <tr><td colSpan="8" style={{textAlign: 'center'}}>No orders found</td></tr>
+                  <tr><td colSpan="9" style={{textAlign: 'center'}}>No orders found</td></tr>
                 )}
                 {orders.map(o => (
                   <tr key={o.id}>
                     <td className="text-accent" style={{fontWeight: 600}}>{o.order_code}</td>
                     <td>{new Date(o.created_at).toLocaleDateString()}</td>
-                    <td>{o.customer_name}</td>
+                    <td>
+                      <button 
+                        className="customer-name-btn"
+                        onClick={() => setSelectedCustomer(o)}
+                      >
+                        {o.customer_name}
+                      </button>
+                    </td>
                     <td>{o.mobile_number}</td>
+                    <td>Custom Order</td>
                     <td>{o.size}</td>
                     <td>{o.colour}</td>
                     <td><StatusBadge status={o.status} /></td>
@@ -216,6 +233,15 @@ export default function Dashboard() {
           id={selectedOrderId} 
           token={token} 
           onClose={() => setSelectedOrderId(null)}
+          onUpdated={fetchOrders}
+        />
+      )}
+
+      {selectedCustomer && (
+        <CustomerModal 
+          order={selectedCustomer}
+          token={token}
+          onClose={() => setSelectedCustomer(null)}
           onUpdated={fetchOrders}
         />
       )}
