@@ -81,7 +81,7 @@ router.get('/', requireAdmin, async (req, res) => {
     .from('orders')
     .select('*', { count: 'exact' });
 
-  if (status && ['pending','confirmed','no_answer','rejected'].includes(status)) {
+  if (status && ['pending','confirmed','no_answer','rejected','packing','ready_for_courier','sent_to_courier','processing','in_transit','out_for_delivery','delivered','returned','cancelled'].includes(status)) {
     query = query.eq('status', status);
   }
   
@@ -129,7 +129,7 @@ router.get('/:id', requireAdmin, async (req, res) => {
 
 router.patch('/:id/status', requireAdmin, async (req, res) => {
   const { status } = req.body;
-  const allowed = ['pending','confirmed','no_answer','rejected'];
+  const allowed = ['pending','confirmed','no_answer','rejected','packing','ready_for_courier','sent_to_courier','processing','in_transit','out_for_delivery','delivered','returned','cancelled'];
   if (!status || !allowed.includes(status)) {
     return res.status(400).json({ error: `status must be one of: ${allowed.join(', ')}` });
   }

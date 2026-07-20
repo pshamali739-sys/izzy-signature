@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
 import OrderDetail from './OrderDetail';
 import CustomerModal from './CustomerModal';
+import CourierDispatch from './CourierDispatch';
 import './Admin.css';
 
 export default function Dashboard() {
@@ -18,7 +19,13 @@ export default function Dashboard() {
     confirmed: 0,
     no_answer: 0,
     rejected: 0,
-    total: 0
+    ready_for_courier: 0,
+    sent_to_courier: 0,
+    in_transit: 0,
+    delivered: 0,
+    returned: 0,
+    total: 0,
+    today_cod: 0
   });
 
   const token = localStorage.getItem('izzy_admin_token');
@@ -50,12 +57,21 @@ export default function Dashboard() {
       
       // Calculate statistics
       const allOrders = data.data || [];
+      const today = new Date().toDateString();
+      const todayOrders = allOrders.filter(o => new Date(o.created_at).toDateString() === today);
+      
       setStats({
         pending: allOrders.filter(o => o.status === 'pending').length,
         confirmed: allOrders.filter(o => o.status === 'confirmed').length,
         no_answer: allOrders.filter(o => o.status === 'no_answer').length,
         rejected: allOrders.filter(o => o.status === 'rejected').length,
-        total: allOrders.length
+        ready_for_courier: allOrders.filter(o => o.status === 'ready_for_courier').length,
+        sent_to_courier: allOrders.filter(o => o.status === 'sent_to_courier').length,
+        in_transit: allOrders.filter(o => o.status === 'in_transit').length,
+        delivered: allOrders.filter(o => o.status === 'delivered').length,
+        returned: allOrders.filter(o => o.status === 'returned').length,
+        total: allOrders.length,
+        today_cod: todayOrders.reduce((sum, o) => sum + (o.amount || 3500), 0)
       });
     } catch (err) {
       console.error(err);
@@ -101,7 +117,12 @@ export default function Dashboard() {
     <div className="admin-layout">
       <header className="admin-header">
         <h1 className="h-brand">Izzy Admin</h1>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        <div className="header-actions">
+          <button className="action-btn" onClick={() => navigate('/admin/courier')}>
+            🚚 Courier Dispatch
+          </button>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        </div>
       </header>
 
       <main className="admin-main">
@@ -119,13 +140,29 @@ export default function Dashboard() {
             <div className="stat-number">{stats.confirmed}</div>
             <div className="stat-label">Confirmed</div>
           </div>
-          <div className="stat-card glass-card no-answer">
-            <div className="stat-number">{stats.no_answer}</div>
-            <div className="stat-label">No Answer</div>
+          <div className="stat-card glass-card ready-courier">
+            <div className="stat-number">{stats.ready_for_courier}</div>
+            <div className="stat-label">Ready Courier</div>
           </div>
-          <div className="stat-card glass-card rejected">
-            <div className="stat-number">{stats.rejected}</div>
-            <div className="stat-label">Rejected</div>
+          <div className="stat-card glass-card sent-courier">
+            <div className="stat-number">{stats.sent_to_courier}</div>
+            <div className="stat-label">Sent Courier</div>
+          </div>
+          <div className="stat-card glass-card in-transit">
+            <div className="stat-number">{stats.in_transit}</div>
+            <div className="stat-label">In Transit</div>
+          </div>
+          <div className="stat-card glass-card delivered">
+            <div className="stat-number">{stats.delivered}</div>
+            <div className="stat-label">Delivered</div>
+          </div>
+          <div className="stat-card glass-card returned">
+            <div className="stat-number">{stats.returned}</div>
+            <div className="stat-label">Returned</div>
+          </div>
+          <div className="stat-card glass-card cod">
+            <div className="stat-number">Rs.{stats.today_cod.toLocaleString()}</div>
+            <div className="stat-label">Today's COD</div>
           </div>
         </div>
 
@@ -140,7 +177,11 @@ export default function Dashboard() {
             <option value="">All Statuses</option>
             <option value="pending">Pending</option>
             <option value="confirmed">Confirmed</option>
-            <option value="no_answer">No Answer</option>
+            <option value="ready_for_courier">Ready For Courier</option>
+            <option value="sent_to_courier">Sent To Courier</option>
+            <option value="in_transit">In Transit</option>
+            <option value="delivered">Delivered</option>
+            <option value="returned">Returned</option>
             <option value="rejected">Rejected</option>
           </select>
         </div>
@@ -157,15 +198,15 @@ export default function Dashboard() {
                   <th>Customer</th>
                   <th>Phone</th>
                   <th>Product</th>
-                  <th>Size</th>
-                  <th>Colour</th>
+                  <th>Amount</th>
                   <th>Status</th>
+                  <th>Courier Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.length === 0 && (
-                  <tr><td colSpan="9" style={{textAlign: 'center'}}>No orders found</td></tr>
+                  <tr><td colSpan="10" style={{textAlign: 'center'}}>No orders found</td></tr>
                 )}
                 {orders.map(o => (
                   <tr key={o.id}>
@@ -181,9 +222,9 @@ export default function Dashboard() {
                     </td>
                     <td>{o.mobile_number}</td>
                     <td>Custom Order</td>
-                    <td>{o.size}</td>
-                    <td>{o.colour}</td>
+                    <td>Rs.{(o.amount || 3500).toLocaleString()}</td>
                     <td><StatusBadge status={o.status} /></td>
+                    <td>{o.courier_status ? <StatusBadge status={o.courier_status} /> : '-'}</td>
                     <td className="actions-cell">
                       {o.status === 'pending' && (
                         <>
@@ -210,7 +251,16 @@ export default function Dashboard() {
                           </button>
                         </>
                       )}
-                      {o.status !== 'pending' && (
+                      {o.status === 'confirmed' && (
+                        <button 
+                          className="action-btn packing"
+                          onClick={() => updateOrderStatus(o.id, 'ready_for_courier')}
+                          title="Ready For Courier"
+                        >
+                          📦
+                        </button>
+                      )}
+                      {o.status !== 'pending' && o.status !== 'confirmed' && (
                         <button 
                           className="view-details-btn"
                           onClick={() => setSelectedOrderId(o.id)}

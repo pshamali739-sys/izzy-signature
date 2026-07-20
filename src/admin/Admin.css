@@ -76,6 +76,22 @@
   color: #fca5a5;
 }
 
+.stat-card.ready-courier .stat-number {
+  color: #c4b5fd;
+}
+
+.stat-card.sent-courier .stat-number {
+  color: #c4b5fd;
+}
+
+.stat-card.in-transit .stat-number {
+  color: #93c5fd;
+}
+
+.stat-card.cod .stat-number {
+  color: #fde047;
+}
+
 .filters {
   display: flex;
   gap: 1rem;
@@ -167,9 +183,137 @@
   border-color: rgba(249, 115, 22, 0.5);
 }
 
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.action-btn.packing:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
 .action-btn.reject:hover {
   background: rgba(239, 68, 68, 0.2);
   border-color: rgba(239, 68, 68, 0.5);
+}
+
+.view-details-btn:hover {
+  text-decoration: underline;
+}
+
+/* Courier Dispatch Page */
+.dispatch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dispatch-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.dispatch-stats .stat-item {
+  text-align: center;
+}
+
+.dispatch-stats .stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.dispatch-stats .stat-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dispatch-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.orders-table tr.selected {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.dispatch-summary {
+  padding: 1.5rem;
+}
+
+.dispatch-summary h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.summary-item span:first-child {
+  color: var(--text-muted);
+}
+
+.summary-item span:last-child {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.orders-preview {
+  margin-bottom: 1.5rem;
+}
+
+.orders-preview h4 {
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.preview-list {
+  max-height: 200px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.preview-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.preview-item:last-child {
+  border-bottom: none;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
 }
 
 .view-details-btn {

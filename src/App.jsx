@@ -8,6 +8,7 @@ import Confirmation from './pages/Confirmation';
 // Admin pages
 import Login from './admin/Login';
 import Dashboard from './admin/Dashboard';
+import CourierDispatch from './admin/CourierDispatch';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/confirmation" element={<Confirmation />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/admin" element={<Dashboard />} />
+        <Route path="/admin/courier" element={<CourierDispatch />} />
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
