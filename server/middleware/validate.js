@@ -1,11 +1,14 @@
 const ALLOWED_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const ALLOWED_COLOURS = [
-  'Pearl White',
-  'Midnight Black',
-  'Dusty Rose',
-  'Sage Green',
-  'Lavender',
-  'Soft Camel',
+  'White',
+  'Black',
+  'Blue',
+  'Pink',
+  'Navy Blue',
+  'Ash',
+  'Green',
+  'Red',
+  'Orange',
 ];
 
 // Sri Lankan mobile: starts with 07, exactly 10 digits (spaces/dashes optional)
