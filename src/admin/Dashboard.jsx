@@ -211,13 +211,12 @@ export default function Dashboard() {
                         </>
                       )}
                       {o.status !== 'pending' && (
-                        <span 
-                          className="view-details"
+                        <button 
+                          className="view-details-btn"
                           onClick={() => setSelectedOrderId(o.id)}
-                          style={{cursor: 'pointer', color: '#8b5cf6'}}
                         >
                           View Details
-                        </span>
+                        </button>
                       )}
                     </td>
                   </tr>
