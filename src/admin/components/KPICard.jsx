@@ -1,99 +1,77 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { cn } from '../../lib/utils';
-import { 
-  ArrowUp,
-  ArrowDown,
-  Package, 
-  DollarSign, 
-  Users, 
-  Clock,
-  CheckCircle,
-  Truck,
-  RotateCcw,
-  MoreVertical
-} from 'lucide-react';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 
-const iconMap = {
-  total: Package,
-  pending: Clock,
-  confirmed: CheckCircle,
-  in_transit: Truck,
-  delivered: CheckCircle,
-  returned: RotateCcw,
-  cod: DollarSign,
-  customers: Users,
-};
+export default function KPICard({ title, value, icon: Icon, trend, trendValue, type }) {
+  const getGradientBorder = () => {
+    switch (type) {
+      case 'total':
+        return 'from-purple-600 to-purple-800';
+      case 'pending':
+        return 'from-blue-600 to-blue-800';
+      case 'confirmed':
+        return 'from-green-600 to-green-800';
+      case 'in_transit':
+        return 'from-yellow-600 to-yellow-800';
+      case 'delivered':
+        return 'from-emerald-600 to-emerald-800';
+      case 'returned':
+        return 'from-red-600 to-red-800';
+      case 'cod':
+        return 'from-purple-600 to-pink-800';
+      default:
+        return 'from-purple-600 to-purple-800';
+    }
+  };
 
-const colorMap = {
-  total: 'bg-purple-500/20 text-purple-400 border-purple-500/20',
-  pending: 'bg-blue-500/20 text-blue-400 border-blue-500/20',
-  confirmed: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20',
-  in_transit: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20',
-  delivered: 'bg-teal-500/20 text-teal-400 border-teal-500/20',
-  returned: 'bg-red-500/20 text-red-400 border-red-500/20',
-  cod: 'bg-pink-500/20 text-pink-400 border-pink-500/20',
-  customers: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/20',
-};
-
-export default function KPICard({ 
-  title, 
-  value, 
-  type = 'total', 
-  trend, 
-  trendValue, 
-  icon: customIcon,
-  onClick 
-}) {
-  const Icon = customIcon || iconMap[type] || Package;
-  const colorClass = colorMap[type] || colorMap.total;
-  
-  const isPositive = trend === 'up';
+  const getIconColor = () => {
+    switch (type) {
+      case 'total':
+        return 'text-purple-400';
+      case 'pending':
+        return 'text-blue-400';
+      case 'confirmed':
+        return 'text-green-400';
+      case 'in_transit':
+        return 'text-yellow-400';
+      case 'delivered':
+        return 'text-emerald-400';
+      case 'returned':
+        return 'text-red-400';
+      case 'cod':
+        return 'text-purple-400';
+      default:
+        return 'text-purple-400';
+    }
+  };
 
   return (
-    <motion.div
-      whileHover={{ y: -2 }}
-      onClick={onClick}
-      className={cn(
-        'card-panel p-5 cursor-pointer transition-all duration-200 group relative overflow-hidden',
-        onClick && 'hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/5'
-      )}
-    >
-      <div className="flex justify-between items-start mb-4">
-        <div className={cn(
-          'w-10 h-10 rounded-xl flex items-center justify-center border',
-          colorClass
-        )}>
-          <Icon className="w-5 h-5" strokeWidth={2} />
-        </div>
-        <button className="text-slate-600 hover:text-slate-400 transition-colors">
-          <MoreVertical className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="space-y-1 relative z-10">
-        <p className="text-sm font-medium text-slate-400">{title}</p>
-        <h3 className="text-2xl font-bold text-white tracking-tight">{value}</h3>
-      </div>
+    <div className="relative group">
+      {/* Gradient Border */}
+      <div className={`absolute inset-0 bg-gradient-to-r ${getGradientBorder()} rounded-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300`} />
       
-      {trendValue && (
-        <div className="mt-4 flex items-center gap-1.5 text-xs font-medium">
-          <div className={cn(
-            'flex items-center gap-0.5',
-            isPositive ? 'text-emerald-400' : 'text-red-400'
-          )}>
-            {isPositive ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-            <span>{trendValue}</span>
+      {/* Card Content */}
+      <div className="relative bg-[#111827] rounded-xl p-5 border border-white/8 hover:border-white/12 transition-all duration-300">
+        <div className="flex items-start justify-between mb-4">
+          <div className={`p-3 rounded-lg bg-white/5 ${getIconColor()}`}>
+            <Icon className="w-6 h-6" />
           </div>
-          <span className="text-slate-500 font-normal">vs yesterday</span>
+          
+          {/* Trend Indicator */}
+          {trend && (
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+              trend === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+            }`}>
+              {trend === 'up' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+              <span>{trendValue}</span>
+            </div>
+          )}
         </div>
-      )}
-      
-      {/* Subtle top border glow for the card itself based on its color */}
-      <div className={cn(
-        "absolute top-0 left-0 w-full h-[1px] opacity-20 group-hover:opacity-40 transition-opacity",
-        colorClass.split(' ')[0].replace('/20', '/50') // Takes the bg color and makes it solid
-      )} />
-    </motion.div>
+
+        <div className="space-y-1">
+          <h3 className="text-[#94A3B8] text-sm font-medium">{title}</h3>
+          <p className="text-white text-2xl font-bold">{value}</p>
+        </div>
+      </div>
+    </div>
   );
 }

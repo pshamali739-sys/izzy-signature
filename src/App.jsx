@@ -8,12 +8,8 @@ import Confirmation from './pages/Confirmation';
 
 // Admin pages
 import Login from './admin/Login';
-import NewDashboard from './admin/NewDashboard';
-import OrderManagement from './admin/OrderManagement';
-import CourierManagement from './admin/CourierManagement';
-import CustomerCRM from './admin/CustomerCRM';
-import RiskDashboard from './admin/RiskDashboard';
-import CODAnalytics from './admin/CODAnalytics';
+import EnterpriseDashboard from './admin/EnterpriseDashboard';
+import CourierDispatch from './admin/CourierDispatch';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,12 +28,8 @@ function App() {
           <Route path="/" element={<OrderForm />} />
           <Route path="/confirmation" element={<Confirmation />} />
           <Route path="/admin/login" element={<Login />} />
-          <Route path="/admin" element={<NewDashboard />} />
-          <Route path="/admin/orders" element={<OrderManagement />} />
-          <Route path="/admin/courier" element={<CourierManagement />} />
-          <Route path="/admin/customers" element={<CustomerCRM />} />
-          <Route path="/admin/risk" element={<RiskDashboard />} />
-          <Route path="/admin/analytics" element={<CODAnalytics />} />
+          <Route path="/admin" element={<EnterpriseDashboard />} />
+          <Route path="/admin/courier" element={<CourierDispatch />} />
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
