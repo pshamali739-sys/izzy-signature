@@ -1,23 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  /* Brand Colours */
-  --bg-deep: #0a0b16;
-  --bg-mid: #16182e;
+  /* Brand Colours - Enterprise Dark CRM */
+  --bg-deep: #0f111a;
+  --bg-mid: #161825;
+  --bg-panel: #1a1c29;
+  --bg-card: #202233;
   --bg-lavender: #4c3d6d;
-  --accent-lavender: #a98be8;
+  --accent-purple: #7c3aed;
   --accent-gold: #e5b962;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-  --error: #ef4444;
-  --success: #10b981;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  
+  /* Status Colors */
+  --status-pending: #3b82f6; /* blue */
+  --status-confirmed: #eab308; /* yellow */
+  --status-intransit: #10b981; /* emerald */
+  --status-delivered: #22c55e; /* green */
+  --status-returned: #ef4444; /* red */
+  
+  --border-light: rgba(255, 255, 255, 0.08);
 
   /* Glassmorphism */
-  --glass-bg: rgba(22, 24, 46, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-bg: rgba(32, 34, 51, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.5);
 
   /* Typography */
-  --font-serif: 'Cormorant Garamond', serif;
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
 }
 
 * {
@@ -28,7 +40,7 @@
 
 body {
   font-family: var(--font-sans);
-  background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-mid) 50%, var(--bg-lavender) 100%);
+  background-color: var(--bg-deep);
   color: var(--text-main);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -37,27 +49,23 @@ body {
 /* Glass Card Utility */
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow: var(--glass-shadow);
 }
 
-/* Typography Utilities */
-.h-brand {
-  font-family: var(--font-serif);
-  color: var(--text-main);
-  font-weight: 600;
-}
-.text-accent {
-  color: var(--accent-gold);
+.card-panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
 }
 
 /* Form Elements base */
 input, textarea, select {
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: 0.875rem;
 }
 
 button {
@@ -69,14 +77,14 @@ button {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-deep);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
+  background: var(--border-light);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {

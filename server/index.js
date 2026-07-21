@@ -6,6 +6,9 @@ const rateLimit = require('express-rate-limit');
 
 const ordersRouter = require('./routes/orders');
 const adminRouter = require('./routes/admin');
+const analyticsRouter = require('./routes/analytics');
+const customersRouter = require('./routes/customers');
+const notificationsRouter = require('./routes/notifications');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +35,9 @@ const orderLimiter = rateLimit({
 app.use('/api/orders', orderLimiter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/customers', customersRouter);
+app.use('/api/notifications', notificationsRouter);
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
